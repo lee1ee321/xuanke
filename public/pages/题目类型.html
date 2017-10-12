@@ -28,11 +28,9 @@
 
 
 <script>
-   
     $(function(){
         //科目
         $.getJSON('/exam/manager/getAllDepartmentes',function(results){
-           
             results.forEach(function(item,index){
                 $('.chose1').append("<a href='#' id='"+item.id+"' >"+item.name+"</a>");
             })
@@ -44,7 +42,6 @@
              $(event.target).attr('class','active3');
              var expartment_id=$(event.target).attr('id');
              //console.log(expartment_id);
-            
         }); 
         //难度
          $.getJSON('/exam/manager/getAllSubjectLevel',function(results){
@@ -119,24 +116,33 @@
                 'subject.topic_id':topic_id
             },
             success:function(data){
-                // data=JSON.parse(JSON.stringify(data));
-                console.log(data);
+                //console.log(data);
                 $(".Catalogtitle").find("em").html(data.length);
                  //在添加之前首先将页面进行清空
                 $(".Catalog_rightnei:not(:hidden)").remove();
                 data.forEach(function(item,index){
-                    console.log(item);
-                     var div=$(".Catalog_rightnei:hidden").clone().removeAttr("hidden");
-                      $(".Catalog_right").append(div);
-                    // div.find(".Catalogtitwo").html("题号:&nbsp;&nbsp;题型:"+item.subjectType.realName+"&nbsp;&nbsp;难度:"+item.subjectLevel.realName+"&nbsp;&nbsp;上传人:"+item.user+"&nbsp;&nbsp;来源:"+null+"&nbsp;&nbsp;上传时间:"+item.uploadTime+"&nbsp;&nbsp;组卷次数:<em>0</em>");
-                    var stemOne=$("<span>"+item.stem+"</span>");
-                    div.find(".Catalogcontentup").append(stemOne);
+                    if(item.subjectType_id==3){
+                        var div=$('.Catalog_rightnei').eq(0).clone();
+                        div.removeAttr('hidden');
+                        div.find('.Catalogcontentup').html(item.stem) 
+                        $('.Catalog_right').append(div);    
+                    }else{
+                        var div=$('.Catalog_rightnei').eq(0).clone();
+                        div.removeAttr('hidden');
+                        $.getJSON('/exam/manager/getAllChoices',function(results){
+                             results.forEach(function(item,index){
+    div.find('.Catalogcontentup').html("<ol type='A' style='margin-left:20px'><li>"+item.content+"</li><li>2</li><li>3</li></ol>");
+                             })
+                        })
+
+                        $('.Catalog_right').append(div);    
+                    }
                 })
             }
         })
      }
 })
-        
+      
        
     })
 </script>

@@ -6,6 +6,7 @@ var subjectLevelDB = require('../db/subjectLevel');
 var topicDB = require('../db/topic');
 var subjectTypeDB = require('../db/subjectType');
 var subjectDB = require('../db/subject');
+var choiceDB = require('../db/choice');
 
 router.get('/getAllDepartmentes',function(req,resp){
    epartmentDB.findAll().then(function(results){
@@ -45,6 +46,17 @@ router.get('/getAllTopics',function(req,resp){
 })
 router.post('/getAllSubjects',function(req,resp){
    subjectDB.findAll(req.body).then(function(results){
+        //console.log('有')
+        resp.send(results)
+        // console.log(results)
+    }).catch(function(err){
+       resp.send(err);
+        //console.log('没有')        
+    })
+
+})
+router.get('/getAllChoices',function(req,resp){
+   choiceDB.findAll().then(function(results){
         //console.log('有')
         resp.send(results)
         // console.log(results)
