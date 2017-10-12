@@ -1,0 +1,142 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablea">
+    <tr>
+        <td align="center">科目</td>
+        <td align="left">
+            <div class="chose chose1"></div>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">难度</td>
+        <td align="left">
+            <div class="chose chose2"></div>
+        </td>
+    </tr>
+     <tr>
+        <td align="center">类型</td>
+        <td align="left">
+            <div class="chose chose3"></div>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">知识点</td>
+        <td align="left">
+            <div class="chose chose4"></div>
+        </td>
+    </tr>
+     
+</table>
+
+
+<script>
+   
+    $(function(){
+        //科目
+        $.getJSON('/exam/manager/getAllDepartmentes',function(results){
+           
+            results.forEach(function(item,index){
+                $('.chose1').append("<a href='#' id='"+item.id+"' >"+item.name+"</a>");
+            })
+             $('.chose1').children().eq(0).trigger('click');
+           // console.log(results);
+        });
+         $('.chose1').click(function(event){
+             $('.chose1').children().attr('class','');
+             $(event.target).attr('class','active3');
+             var expartment_id=$(event.target).attr('id');
+             //console.log(expartment_id);
+            
+        }); 
+        //难度
+         $.getJSON('/exam/manager/getAllSubjectLevel',function(results){
+            results.forEach(function(item,index){
+                $('.chose2').append("<a href='#' name='"+item.name+"' id='"+item.id+"' >"+item.realName+"</a>");
+            })
+             $('.chose2').children().eq(0).trigger('click');
+            // console.log(results);
+        });
+         $('.chose2').click(function(event){
+             $('.chose2').children().attr('class','');
+             $(event.target).attr('class','active3');
+             var subjectLevel_id=$(event.target).attr('id');
+             //console.log(subjectLevel_id);
+        });  
+        //类型   
+         $.getJSON('/exam/manager/getAllSubjectType',function(results){
+            results.forEach(function(item,index){
+                $('.chose3').append("<a href='#' name='"+item.name+"' id='"+item.id+"' >"+item.realName+"</a>");
+            })
+             $('.chose3').children().eq(0).trigger('click');
+            // console.log(results);
+        });
+         $('.chose3').click(function(event){
+             $('.chose3').children().attr('class','');
+             $(event.target).attr('class','active3');
+             var subjectType_id=$(event.target).attr('id');
+             //console.log(subjectType_id);
+        });  
+        //知识点
+        $.getJSON('/exam/manager/getAllTopics',function(results){
+            results.forEach(function(item,index){
+                $('.chose4').append("<a href='#' department_id='"+item.department_id+"' id='"+item.id+"' >"+item.title+"</a>");
+            })
+                $('.chose4').children().eq(0).trigger('click');
+            //console.log(results);
+        });
+         $('.chose4').click(function(event){
+             $('.chose4').children().attr('class','');
+             $(event.target).attr('class','active3');
+            //  var topic_id=$(event.target).attr('department_id');
+            //  console.log(topic_id);
+        });  
+        
+        $('table').click(function(){
+          var ids=$('table tr td .chose a.active3').get();
+          var department_id='';
+          var subjectLevel_id='';
+          var subjectType_id='';
+          var topic_id='';
+          if(ids.length==4){
+              ids.forEach(function(item,index){
+                switch(index){
+                    case 0:department_id=item.id;
+                        break;
+                    case 1:subjectLevel_id=item.id
+                        break;
+                    case 2:subjectType_id=item.id
+                        break;
+                    case 3:topic_id=item.id
+                        break;
+                }      
+              })
+              //获取到题目
+        $.ajax({
+            url:'/exam/manager/getAllSubjects',
+            method:'post',
+            data:{
+                'subject.department_id':department_id,
+                'subject.subjectLevel_id':subjectLevel_id,
+                'subject.subjectType_id':subjectType_id,
+                'subject.topic_id':topic_id
+            },
+            success:function(data){
+                // data=JSON.parse(JSON.stringify(data));
+                console.log(data);
+                $(".Catalogtitle").find("em").html(data.length);
+                 //在添加之前首先将页面进行清空
+                $(".Catalog_rightnei:not(:hidden)").remove();
+                data.forEach(function(item,index){
+                    console.log(item);
+                     var div=$(".Catalog_rightnei:hidden").clone().removeAttr("hidden");
+                      $(".Catalog_right").append(div);
+                    // div.find(".Catalogtitwo").html("题号:&nbsp;&nbsp;题型:"+item.subjectType.realName+"&nbsp;&nbsp;难度:"+item.subjectLevel.realName+"&nbsp;&nbsp;上传人:"+item.user+"&nbsp;&nbsp;来源:"+null+"&nbsp;&nbsp;上传时间:"+item.uploadTime+"&nbsp;&nbsp;组卷次数:<em>0</em>");
+                    var stemOne=$("<span>"+item.stem+"</span>");
+                    div.find(".Catalogcontentup").append(stemOne);
+                })
+            }
+        })
+     }
+})
+        
+       
+    })
+</script>
